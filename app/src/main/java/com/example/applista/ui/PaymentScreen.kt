@@ -52,6 +52,9 @@ import com.example.applista.PaymentViewModel
 import com.example.applista.R
 import com.example.applista.data.PaymentConstants
 import com.example.applista.data.PaymentMember
+import com.example.applista.data.PaymentValues
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +70,9 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
     var filter by remember { mutableStateOf(MemberFilter.ALL) }
     var pendingExport by remember { mutableStateOf<ExportAction?>(null) }
     var exportMode by remember { mutableStateOf(ExportMode.CURRENT_FILTER) }
+    var editingValor by remember { mutableStateOf<PaymentMember?>(null) }
+    var valorIndividual by remember { mutableStateOf("") }
+    var confirmApplyAll by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val clipboard = LocalClipboardManager.current
@@ -173,6 +179,14 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
                                 text = stringResource(R.string.label_pix, settings.pix),
                                 style = MaterialTheme.typography.bodyLarge,
                             )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(
+                                    R.string.label_total_pendente,
+                                    PaymentValues.format(PaymentValues.totalPendente(members, settings.valor)),
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
                         }
                         IconButton(onClick = { menuExpanded = !menuExpanded }) {
                             Icon(
@@ -214,6 +228,13 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Text(stringResource(R.string.save_valor_mensal))
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedButton(
+                                onClick = { if (valorMensal.isNotBlank()) confirmApplyAll = true },
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(stringResource(R.string.apply_valor_all))
                             }
 
                             Spacer(modifier = Modifier.height(12.dp))
@@ -309,7 +330,12 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
                 items(filtered, key = { it.id }) { member ->
                     MemberItem(
                         member = member,
+                        valorExibido = PaymentValues.effective(member, settings.valor),
                         onToggle = { viewModel.togglePaid(member) },
+                        onEditValor = {
+                            valorIndividual = member.valor ?: ""
+                            editingValor = member
+                        },
                         onDeleteClick = { pendingDelete = member },
                         onSwipeDelete = { pendingDelete = member },
                     )
@@ -335,6 +361,89 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
             },
             dismissButton = {
                 TextButton(onClick = { pendingDelete = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    editingValor?.let { member ->
+        AlertDialog(
+            onDismissRequest = { editingValor = null },
+            title = { Text(stringResource(R.string.valor_individual_title, member.name)) },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = valorIndividual,
+                        onValueChange = { valorIndividual = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(R.string.hint_valor_individual)) },
+                        placeholder = { Text(settings.valor) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.valor_individual_help, settings.valor),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.setMemberValor(member, valorIndividual)
+                        editingValor = null
+                    },
+                ) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                Row {
+                    if (member.valor != null) {
+                        TextButton(
+                            onClick = {
+                                viewModel.setMemberValor(member, null)
+                                editingValor = null
+                            },
+                        ) {
+                            Text(stringResource(R.string.use_valor_geral))
+                        }
+                    }
+                    TextButton(onClick = { editingValor = null }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            },
+        )
+    }
+
+    if (confirmApplyAll) {
+        AlertDialog(
+            onDismissRequest = { confirmApplyAll = false },
+            title = { Text(stringResource(R.string.apply_valor_all_title)) },
+            text = {
+                Text(
+                    stringResource(
+                        R.string.apply_valor_all_message,
+                        PaymentValues.normalize(valorMensal),
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.applyValorToAll(valorMensal)
+                        valorMensal = PaymentValues.normalize(valorMensal)
+                        confirmApplyAll = false
+                    },
+                ) {
+                    Text(stringResource(R.string.apply))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmApplyAll = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             },

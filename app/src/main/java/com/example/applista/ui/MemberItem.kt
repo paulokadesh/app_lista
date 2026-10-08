@@ -20,10 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.applista.data.PaymentMember
 
@@ -31,7 +33,9 @@ import com.example.applista.data.PaymentMember
 @Composable
 fun MemberItem(
     member: PaymentMember,
+    valorExibido: String,
     onToggle: () -> Unit,
+    onEditValor: () -> Unit,
     onDeleteClick: () -> Unit,
     onSwipeDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -93,6 +97,19 @@ fun MemberItem(
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
+                // Valor individual em destaque; valor geral em cor neutra.
+                TextButton(onClick = onEditValor) {
+                    Text(
+                        text = valorExibido,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = if (member.valor != null) FontWeight.Bold else FontWeight.Normal,
+                        color = if (member.valor != null) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
+                }
                 IconButton(onClick = onDeleteClick) {
                     Icon(
                         imageVector = Icons.Default.Delete,

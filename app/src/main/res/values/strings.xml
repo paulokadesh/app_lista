@@ -1,13 +1,23 @@
 <resources>
     <string name="app_name">Lista de Pagamento</string>
     <string name="screen_title">Controle de pagamentos</string>
-    <string name="label_valor">Valor: %1$s</string>
+    <string name="label_valor">Valor geral: %1$s</string>
+    <string name="label_total_pendente">A receber: %1$s</string>
+    <string name="apply_valor_all">Aplicar valor a todos</string>
+    <string name="apply_valor_all_title">Aplicar valor único?</string>
+    <string name="apply_valor_all_message">Todos os membros passam a pagar %1$s. Os valores individuais serão apagados.</string>
+    <string name="apply">Aplicar</string>
+    <string name="valor_individual_title">Valor de %1$s</string>
+    <string name="hint_valor_individual">Valor individual (ex: 30,00)</string>
+    <string name="valor_individual_help">Deixe em branco para usar o valor geral (%1$s).</string>
+    <string name="use_valor_geral">Usar geral</string>
+    <string name="save">Salvar</string>
     <string name="label_vencimento">Vencimento: dia %1$d</string>
     <string name="label_pix">Chave PIX: %1$s</string>
     <string name="hint_pix">Chave PIX</string>
     <string name="save_pix">Salvar chave PIX</string>
     <string name="hint_valor_mensal">Valor do mês (ex: R$ 25,00)</string>
-    <string name="save_valor_mensal">Salvar valor do mês</string>
+    <string name="save_valor_mensal">Salvar valor geral (quem não tem individual)</string>
     <string name="search_member">Buscar membro</string>
     <string name="filter_all">Todos</string>
     <string name="filter_paid">Pagos</string>

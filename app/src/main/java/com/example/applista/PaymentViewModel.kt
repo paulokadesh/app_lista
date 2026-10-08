@@ -49,6 +49,14 @@ class PaymentViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch { repository.setValorMensal(valor) }
     }
 
+    fun applyValorToAll(valor: String) {
+        viewModelScope.launch { repository.applyValorToAll(valor) }
+    }
+
+    fun setMemberValor(member: PaymentMember, valor: String?) {
+        viewModelScope.launch { repository.setMemberValor(member, valor) }
+    }
+
     fun setPix(pix: String) {
         viewModelScope.launch { repository.setPix(pix) }
     }

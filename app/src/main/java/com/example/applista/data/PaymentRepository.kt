@@ -81,11 +81,36 @@ class PaymentRepository(private val context: Context) {
         }
     }
 
+    /** Valor geral: vale para quem não tem valor individual. */
     suspend fun setValorMensal(valor: String) {
-        val trimmed = valor.trim()
-        if (trimmed.isEmpty()) return
+        if (valor.isBlank()) return
+        val normalized = PaymentValues.normalize(valor)
         context.paymentDataStore.edit { prefs ->
-            prefs[valorKey] = trimmed
+            prefs[valorKey] = normalized
+        }
+    }
+
+    /** Valor único: grava como geral e apaga os valores individuais de todos. */
+    suspend fun applyValorToAll(valor: String) {
+        if (valor.isBlank()) return
+        val normalized = PaymentValues.normalize(valor)
+        context.paymentDataStore.edit { prefs ->
+            prefs[valorKey] = normalized
+            val list = parseList(prefs[membersKey]).map { it.copy(valor = null) }
+            prefs[membersKey] = gson.toJson(list)
+        }
+    }
+
+    /** Valor individual; em branco volta a usar o valor geral. */
+    suspend fun setMemberValor(member: PaymentMember, valor: String?) {
+        val normalized = valor?.takeIf { it.isNotBlank() }?.let { PaymentValues.normalize(it) }
+        context.paymentDataStore.edit { prefs ->
+            val list = parseList(prefs[membersKey])
+            val idx = list.indexOfFirst { it.id == member.id }
+            if (idx >= 0) {
+                list[idx] = list[idx].copy(valor = normalized)
+                prefs[membersKey] = gson.toJson(list)
+            }
         }
     }
 
@@ -103,12 +128,20 @@ class PaymentRepository(private val context: Context) {
         pix: String,
     ): String = buildString {
         appendLine("⚽ Lista de Pagamento - Vencimento: ${PaymentConstants.VENCIMENTO_DIA}")
-        appendLine("💰 Valor: $valor")
+        if (members.all { it.valor == null }) {
+            appendLine("💰 Valor: $valor")
+        }
         appendLine("🔑 PIX: $pix")
         appendLine()
-        members.forEach { m ->
+        members.forEachIndexed { i, m ->
             val icon = if (m.isPaid) "✅" else "⛔"
-            appendLine("$icon ${m.name}")
+            val situacao = if (m.isPaid) "PAGO" else PaymentValues.effective(m, valor)
+            appendLine("$icon ${i + 1}. ${m.name} - $situacao")
+        }
+        val total = PaymentValues.totalPendente(members, valor)
+        if (total.signum() > 0) {
+            appendLine()
+            appendLine("💵 Total a receber: ${PaymentValues.format(total)}")
         }
     }
 
