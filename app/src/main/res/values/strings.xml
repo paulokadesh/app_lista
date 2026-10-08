@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Lista de Pagamento</string>
+    <string name="screen_title">Controle de pagamentos</string>
+    <string name="label_valor">Valor: %1$s</string>
+    <string name="label_vencimento">Vencimento: dia %1$d</string>
+    <string name="label_pix">Chave PIX: %1$s</string>
+    <string name="hint_pix">Chave PIX</string>
+    <string name="save_pix">Salvar chave PIX</string>
+    <string name="hint_valor_mensal">Valor do mês (ex: R$ 25,00)</string>
+    <string name="save_valor_mensal">Salvar valor do mês</string>
+    <string name="search_member">Buscar membro</string>
+    <string name="filter_all">Todos</string>
+    <string name="filter_paid">Pagos</string>
+    <string name="filter_pending">A pagar</string>
+    <string name="filter_with_count">%1$s (%2$d)</string>
+    <string name="hint_new_member">Nome do membro</string>
+    <string name="add_member">Adicionar membro</string>
+    <string name="copy_whatsapp">Copiar para WhatsApp</string>
+    <string name="share_whatsapp">Enviar no WhatsApp</string>
+    <string name="export_options_title">Opções de exportação</string>
+    <string name="export_current_filter">Exportar o que está filtrado</string>
+    <string name="export_all_sorted">Exportar todos (pagos primeiro, por nome)</string>
+    <string name="export">Exportar</string>
+    <string name="share_title">Compartilhar lista</string>
+    <string name="share_error">Não foi possível abrir o compartilhamento</string>
+    <string name="copied">Texto copiado</string>
+    <string name="confirm_remove_title">Remover membro?</string>
+    <string name="confirm_remove_message">Remover \"%1$s\" da lista?</string>
+    <string name="remove">Remover</string>
+    <string name="cancel">Cancelar</string>
+</resources>
