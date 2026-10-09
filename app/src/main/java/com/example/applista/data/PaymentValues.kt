@@ -33,7 +33,13 @@ object PaymentValues {
 
     /** Soma o que falta receber (membros não pagos). Ignora valores que não são número. */
     fun totalPendente(members: List<PaymentMember>, valorGeral: String): BigDecimal =
-        members.filter { !it.isPaid }
-            .mapNotNull { parse(effective(it, valorGeral)) }
+        soma(members.filter { !it.isPaid }, valorGeral)
+
+    /** Soma o que já foi recebido (membros pagos). */
+    fun totalPago(members: List<PaymentMember>, valorGeral: String): BigDecimal =
+        soma(members.filter { it.isPaid }, valorGeral)
+
+    private fun soma(members: List<PaymentMember>, valorGeral: String): BigDecimal =
+        members.mapNotNull { parse(effective(it, valorGeral)) }
             .fold(BigDecimal.ZERO, BigDecimal::add)
 }

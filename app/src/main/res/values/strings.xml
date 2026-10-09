@@ -2,7 +2,8 @@
     <string name="app_name">Lista de Pagamento</string>
     <string name="screen_title">Controle de pagamentos</string>
     <string name="label_valor">Valor geral: %1$s</string>
-    <string name="label_total_pendente">A receber: %1$s</string>
+    <string name="total_a_receber">A receber</string>
+    <string name="total_recebido">Recebido</string>
     <string name="apply_valor_all">Aplicar valor a todos</string>
     <string name="apply_valor_all_title">Aplicar valor único?</string>
     <string name="apply_valor_all_message">Todos os membros passam a pagar %1$s. Os valores individuais serão apagados.</string>

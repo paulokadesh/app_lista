@@ -179,14 +179,6 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
                                 text = stringResource(R.string.label_pix, settings.pix),
                                 style = MaterialTheme.typography.bodyLarge,
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = stringResource(
-                                    R.string.label_total_pendente,
-                                    PaymentValues.format(PaymentValues.totalPendente(members, settings.valor)),
-                                ),
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
                         }
                         IconButton(onClick = { menuExpanded = !menuExpanded }) {
                             Icon(
@@ -320,7 +312,14 @@ fun PaymentScreen(viewModel: PaymentViewModel) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TotalsCard(
+                aReceber = PaymentValues.format(PaymentValues.totalPendente(members, settings.valor)),
+                recebido = PaymentValues.format(PaymentValues.totalPago(members, settings.valor)),
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -522,6 +521,61 @@ private fun RowButtons(
                 Text(stringResource(R.string.share_whatsapp))
             }
         }
+    }
+}
+
+/** Card compacto com os totais do mês (lista inteira, independe do filtro). */
+@Composable
+private fun TotalsCard(
+    aReceber: String,
+    recebido: String,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+        ) {
+            TotalItem(
+                label = stringResource(R.string.total_a_receber),
+                value = aReceber,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.weight(1f),
+            )
+            TotalItem(
+                label = stringResource(R.string.total_recebido),
+                value = recebido,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun TotalItem(
+    label: String,
+    value: String,
+    color: androidx.compose.ui.graphics.Color,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            color = color,
+        )
     }
 }
 
