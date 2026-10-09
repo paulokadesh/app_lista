@@ -138,11 +138,6 @@ class PaymentRepository(private val context: Context) {
             val situacao = if (m.isPaid) "PAGO" else PaymentValues.effective(m, valor)
             appendLine("$icon ${i + 1}. ${m.name} - $situacao")
         }
-        val total = PaymentValues.totalPendente(members, valor)
-        if (total.signum() > 0) {
-            appendLine()
-            appendLine("💵 Total a receber: ${PaymentValues.format(total)}")
-        }
     }
 
     private fun parseList(raw: String?): MutableList<PaymentMember> {
